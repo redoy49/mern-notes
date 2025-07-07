@@ -57,10 +57,16 @@ const CheckoutForm = () => {
     fetchClientSecret();
   }, []);
 
-   // Step 2a: Create payment method
+  // Handle Form Submit
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!stripe || !elements || !clientSecret) return;
+    setLoading(true);
+    const card = elements.getElement(CardElement);
+
     const { error: pmError, paymentMethod } = await stripe.createPaymentMethod({
       type: "card",
-      card,
+      card
     });
 
     if (pmError) {
@@ -69,11 +75,9 @@ const CheckoutForm = () => {
       return;
     }
 
-    // Step 2b: Confirm the payment using created paymentMethod.id
-    const { error: confirmError, paymentIntent } =
-      await stripe.confirmCardPayment(clientSecret, {
-        payment_method: paymentMethod.id,
-      });
+    const { error: confirmError, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
+      payment_method: paymentMethod.id
+    });
 
     if (confirmError) {
       alert("Payment failed: " + confirmError.message);
@@ -83,7 +87,7 @@ const CheckoutForm = () => {
 
     setLoading(false);
   };
-
+  
   return (
     <form onSubmit={handleSubmit}>
       <CardElement />
@@ -126,7 +130,7 @@ app.post("/create-payment-intent", async (req, res) => {
 
   try {
     const paymentIntent = await stripe.paymentIntents.create({
-      amountInCents, // 500 Cents is $5.00
+      amount: amountInCents, // Correct key for Stripe is `amount` | 500 Cents is $5.00
       currency: "usd",
       payment_method_types: ["card"],
     });
