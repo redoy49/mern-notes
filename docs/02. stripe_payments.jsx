@@ -166,17 +166,8 @@ nodemon index.js
     ↓
 5. [React Frontend] ➡ creates a PaymentMethod with stripe.createPaymentMethod()
     ↓ 
-6. Frontend: Handle success or error response  
-7. Secure backend keys, never expose secret keys frontend  
-8. Use Stripe test card `4242 4242 4242 4242` for testing  
-9. Show loading state during payment processing 
-
-
-
-
-
-[React Frontend] ➡ confirms payment with stripe.confirmCardPayment(clientSecret, payment_method)
+6. [React Frontend] ➡ confirms payment with stripe.confirmCardPayment(clientSecret, payment_method)
     ↓
-[Stripe] ➡ processes payment and returns success or failure
+7. [Stripe] ➡ processes payment and returns success or failure
     ↓
-[Frontend] ➡ displays “Payment Successful” or “Payment Failed” message
+8. [Frontend] ➡ displays “Payment Successful” or “Payment Failed” message  
