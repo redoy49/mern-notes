@@ -27,11 +27,7 @@ export default App;
 
 03. Manual Payment Flow with Loading | CheckoutForm.jsx 
 import React, { useEffect, useState } from "react";
-import {
-  CardElement,
-  useStripe,
-  useElements,
-} from "@stripe/react-stripe-js";
+import { CardElement, useStripe, useElements, } from "@stripe/react-stripe-js";
 import axios from "axios";
 
 const CheckoutForm = () => {
@@ -49,7 +45,6 @@ const CheckoutForm = () => {
           amountInCents: 500, // $5.00
           parcelId: "parcel_1234",
           customerId: "user_001",
-          notes: "Birthday Gift",
         });
 
         console.log("Response from Intent", res);
@@ -131,14 +126,12 @@ app.post("/create-payment-intent", async (req, res) => {
 
   try {
     const paymentIntent = await stripe.paymentIntents.create({
-      amount, // example: 500 for $5.00
+      amountInCents, // 500 Cents is $5.00
       currency: "usd",
       payment_method_types: ["card"],
     });
 
-    res.send({
-      clientSecret: paymentIntent.client_secret,
-    });
+    res.send({ clientSecret: paymentIntent.client_secret, });
   } catch (error) {
     console.error("Stripe error:", error.message);
     res.status(500).json({ error: error.message });
