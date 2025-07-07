@@ -32,66 +32,83 @@ import {
   useStripe,
   useElements,
 } from "@stripe/react-stripe-js";
+import axios from "axios";
 
 const CheckoutForm = () => {
   const [clientSecret, setClientSecret] = useState("");
+  const [loading, setLoading] = useState(false);
   const stripe = useStripe();
   const elements = useElements();
 
-  //Fetch clientSecret from backend
+  // Step 1: Fetch clientSecret from backend when component mounts
   useEffect(() => {
-    fetch("http://localhost:5000/create-payment-intent", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ amount: 500 }), // $5.00
-    })
-      .then((res) => res.json())
-      .then((data) => setClientSecret(data.clientSecret));
+    const fetchClientSecret = async () => {
+      try {
+        // Request payment intent from backend with additional metadata
+        const res = await axios.post("http://localhost:5000/create-payment-intent", {
+          amountInCents: 500, // $5.00
+          parcelId: "parcel_1234",
+          customerId: "user_001",
+          notes: "Birthday Gift",
+        });
+
+        console.log("Response from Intent", res);
+        setClientSecret(res.data.clientSecret);
+      } catch (err) {
+        console.error("Error fetching clientSecret:", err.message);
+      }
+    };
+
+    fetchClientSecret();
   }, []);
 
-  //Handle form submission
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    if (!stripe || !elements || !clientSecret) return;
-
-    const card = elements.getElement(CardElement);
-    const result = await stripe.confirmCardPayment(clientSecret, {
-      payment_method: {
-        card,
-      },
+   // Step 2a: Create payment method
+    const { error: pmError, paymentMethod } = await stripe.createPaymentMethod({
+      type: "card",
+      card,
     });
 
-    if (result.error) {
-      alert(result.error.message);
-    } else {
-      if (result.paymentIntent.status === "succeeded") {
-        alert("Payment successful!");
-      }
+    if (pmError) {
+      alert("Error: " + pmError.message);
+      setLoading(false);
+      return;
     }
+
+    // Step 2b: Confirm the payment using created paymentMethod.id
+    const { error: confirmError, paymentIntent } =
+      await stripe.confirmCardPayment(clientSecret, {
+        payment_method: paymentMethod.id,
+      });
+
+    if (confirmError) {
+      alert("Payment failed: " + confirmError.message);
+    } else if (paymentIntent.status === "succeeded") {
+      alert("🎉 Payment successful!");
+    }
+
+    setLoading(false);
   };
 
   return (
     <form onSubmit={handleSubmit}>
       <CardElement />
-      <button type="submit" disabled={!stripe}>
-        Pay $5
+      <button type="submit" disabled={!stripe || loading}>
+        {loading ? "Processing..." : "Pay $5"}
       </button>
     </form>
   );
 };
-
 export default CheckoutForm;
 
-04. RUN THE FRONTEND CODE 
-npm run dev
+04. Run the React Frontend ===
+npm run dev   (if using Vite)
+npm start     (if using CRA)
 
 05. Use this test card:
 Card Number: 4242 4242 4242 4242
 Expiry: Any future date
 CVC: Any 3 digits
 ZIP: Any 5 digits
-
 
 BACKEND: CREATE PAYMENT INTENT
 
