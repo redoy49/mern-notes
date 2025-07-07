@@ -1,4 +1,4 @@
-Frontend (React.js) Custom Stripe Payment Flow (Manual Way)
+FRONTEND: (React.js) Custom Stripe Payment Flow (Manual Way)
 
 01.Install stripe package 
 npm install @stripe/react-stripe-js @stripe/stripe-js
@@ -110,20 +110,24 @@ Expiry: Any future date
 CVC: Any 3 digits
 ZIP: Any 5 digits
 
-BACKEND: CREATE PAYMENT INTENT
+BACKEND: Create Payment Intent
 
 01.Install required packages
 npm install express cors stripe dotenv
 
-02. Environment Setup
+02. Environment Setup | In .env file
 STRIPE_SECRET_KEY=your_secret_key_here
 
-03. Create Payment Intent 
+03. POST: Create Payment Intent 
 const Stripe = require("stripe");
 const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 
 app.post("/create-payment-intent", async (req, res) => {
-  const { amount } = req.body;
+  const { amountInCents, parcelId, customerId } = req.body;
+
+  if (!amountInCents) {
+    return res.status(400).json({ error: "Amount is required" });
+  }
 
   try {
     const paymentIntent = await stripe.paymentIntents.create({
@@ -136,9 +140,10 @@ app.post("/create-payment-intent", async (req, res) => {
       clientSecret: paymentIntent.client_secret,
     });
   } catch (error) {
+    console.error("Stripe error:", error.message);
     res.status(500).json({ error: error.message });
   }
 });
 
-04. Run the Client Code
+04. Run the Server Code
 nodemon index.js
