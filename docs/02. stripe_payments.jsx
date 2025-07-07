@@ -1,5 +1,15 @@
-FRONTEND: (React.js) Custom Stripe Payment Flow (Manual Way)
+# Stripe Custom Payment Flow — Key Steps
+1. Backend: `stripe.paymentIntents.create()` → create PaymentIntent  
+2. Frontend: Call backend to fetch `clientSecret`  
+3. Frontend: Display Stripe `CardElement` for card input  
+4. Frontend: `stripe.createPaymentMethod()` → create payment method  
+5. Frontend: `stripe.confirmCardPayment(clientSecret, { payment_method })` → confirm payment  
+6. Frontend: Handle success or error response  
+7. Secure backend keys, never expose secret keys frontend  
+8. Use Stripe test card `4242 4242 4242 4242` for testing  
+9. Show loading state during payment processing  
 
+# FRONTEND: (React.js) Custom Stripe Payment Flow (Manual Way)
 01.Install stripe package 
 npm install @stripe/react-stripe-js @stripe/stripe-js
 
@@ -109,7 +119,7 @@ Expiry: Any future date
 CVC: Any 3 digits
 ZIP: Any 5 digits
 
-BACKEND: Create Payment Intent
+# BACKEND: Create Payment Intent
 
 01.Install required packages
 npm install express cors stripe dotenv
@@ -144,3 +154,29 @@ app.post("/create-payment-intent", async (req, res) => {
 
 04. Run the Server Code
 nodemon index.js
+
+# Real World Payment Flow 
+1. [Customer] ➡ clicks "Pay $5"
+    ↓
+2. [React Frontend] ➡ calls backend to create a PaymentIntent using stripe.paymentIntents.create()
+    ↓ 
+3. [Express Backend] ➡ Stripe creates PaymentIntent and returns clientSecret
+    ↓
+4. [React Frontend] ➡ collects card details via Stripe's CardElement
+    ↓
+5. [React Frontend] ➡ creates a PaymentMethod with stripe.createPaymentMethod()
+    ↓ 
+6. Frontend: Handle success or error response  
+7. Secure backend keys, never expose secret keys frontend  
+8. Use Stripe test card `4242 4242 4242 4242` for testing  
+9. Show loading state during payment processing 
+
+
+
+
+
+[React Frontend] ➡ confirms payment with stripe.confirmCardPayment(clientSecret, payment_method)
+    ↓
+[Stripe] ➡ processes payment and returns success or failure
+    ↓
+[Frontend] ➡ displays “Payment Successful” or “Payment Failed” message
