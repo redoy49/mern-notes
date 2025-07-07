@@ -1,30 +1,31 @@
-Frontend (React.js) — Custom Stripe Payment Flow
+Frontend (React.js) Custom Stripe Payment Flow (Manual Way)
 
 01.Install stripe package 
 npm install @stripe/react-stripe-js @stripe/stripe-js
 
-02.CREATE CUSTOM PAYMENT FORM
+02.Create Custom Payment Form Wrapper | Payment.jsx
+import React from "react";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import CheckoutForm from "./CheckoutForm";
 
-// Load Stripe with publishable key
+// Load Stripe with your publishable key
 const stripePromise = loadStripe("your_publishable_key_here");
 
-function App() {
+const App = () => {
   return (
     <div>
-      <h1>Stripe Payment</h1>
+      <h1>Stripe Manual Payment Example</h1>
       <Elements stripe={stripePromise}>
         <CheckoutForm />
       </Elements>
     </div>
   );
-}
+};
 
 export default App;
 
-03. CheckoutForm.jsx Component 
+03. Manual Payment Flow with Loading | CheckoutForm.jsx 
 import React, { useEffect, useState } from "react";
 import {
   CardElement,
