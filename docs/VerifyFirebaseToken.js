@@ -1,5 +1,14 @@
-// middleware/verifyFirebaseToken.js
+// Install Packages
+npm install firebase-admin --save
+
+// Firebase VerifyToken Middleware
+
 const admin = require("firebase-admin");
+const serviceAccount = require("./serviceAccountKey.json");
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+});
 
 // Middleware to verify Firebase ID token
 const verifyFirebaseToken = async (req, res, next) => {
@@ -20,4 +29,3 @@ const verifyFirebaseToken = async (req, res, next) => {
   }
 };
 
-module.exports = verifyFirebaseToken;
