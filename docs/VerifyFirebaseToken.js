@@ -1,3 +1,14 @@
+Frontend → sends token to server
+
+Server → initializes Firebase Admin with serviceAccount
+
+Server → creates verifyFirebaseToken middleware
+
+Middleware → verifies token & attaches user info
+
+Routes → protected using middleware
+
+
 // Install Packages
 npm install firebase-admin --save
 
