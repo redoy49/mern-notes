@@ -1,13 +1,8 @@
-Frontend → sends token to server
-
-Server → initializes Firebase Admin with serviceAccount
-
-Server → creates verifyFirebaseToken middleware
-
-Middleware → verifies token & attaches user info
-
-Routes → protected using middleware
-
+1. Frontend → sends token to server
+2. Server → initializes Firebase Admin with serviceAccount
+3. Server → creates verifyFirebaseToken middleware
+4. Server → Middleware → verifies token & attaches user info
+5. Server → Routes → protected using middleware
 
 // Install Packages
 npm install firebase-admin --save
@@ -48,22 +43,15 @@ const verifyFirebaseToken = async (req, res, next) => {
 2. Initialize Firebase Admin on the server:
    - Load serviceAccountKey.json.
    - Call admin.initializeApp({ credential: admin.credential.cert(serviceAccount) }).
-
+  
 3. Create middleware verifyFirebaseToken:
    - Extract token from req.headers.authorization.
    - Verify token with admin.auth().verifyIdToken(token).
    - If valid, attach decoded user info to req.user and call next().
    - If invalid, respond with 401 Unauthorized.
-
+  
 4. Server routes:
    - Use verifyFirebaseToken middleware to protect routes.
    - Access req.user in route handler after verification.
    - Process request and respond.
 
----
-
-Summary:
-- Frontend obtains and sends Firebase ID token.
-- Firebase Admin initialized on server with service account.
-- Middleware verifies token on protected requests.
-- Valid tokens allow access; invalid tokens cause 401 errors.
