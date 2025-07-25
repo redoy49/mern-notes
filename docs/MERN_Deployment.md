@@ -2,9 +2,9 @@
 
 ### STEP 01: Comment or Delete all MongoDB Await Commands Before Deployment. Don't keep these active during Vercel deployment (it runs as serverless function):
 ```js
-- await client.connect();
-- await client.db("admin").command({ ping: 1 });
-- await client.close();
+await client.connect();
+await client.db("admin").command({ ping: 1 });
+await client.close();
 ```
 ### STEP 02: Create a vercel.json File at Root & Paste this. vercel.json tells Vercel how to build and route your app
 ```js
